@@ -81,8 +81,18 @@ def ginput_image(folder_path,new_name):
     return x,y
 
 # ------------------------------------------openCV-------------------------------------------------
-# Func 1: show result
-def display(title,image):
-    cv2.imread(title,image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+# Func 1: Open video
+def play_video(video_path):
+    # Open video file (not play)
+    video = cv2.VideoCapture(video_path)
+    cv2.namedWindow("Video",cv2.WINDOW_NORMAL)
+    # Play video and check issue
+    while video.isOpened():
+        ret,frame = video.read() # Read ret,frame
+        if ret != True:
+            print("Video error")
+            break
+        cv2.imshow("xxx",frame)
+        if cv2.waitKey(10) == ord("q"): # Stop video is pressing "q"
+            break
+    video.release()
