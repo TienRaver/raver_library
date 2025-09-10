@@ -1,9 +1,10 @@
-# ------------------------------------------PIL,Numpy,OS,Matplotlib,Scipy-------------------------------------------------
 from PIL import Image
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+import cv2
 
+# ------------------------------------------PIL,Numpy,OS,Matplotlib,Scipy-------------------------------------------------
 # Func 1: Average image
 def average_image(list):
       # Create new array
@@ -79,5 +80,9 @@ def ginput_image(folder_path,new_name):
     plt.show()
     return x,y
 
-
 # ------------------------------------------openCV-------------------------------------------------
+# Func 1: show result
+def display(title,image):
+    cv2.imread(title,image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
