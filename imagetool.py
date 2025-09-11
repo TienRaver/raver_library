@@ -107,3 +107,30 @@ def play_video(video_path):
     # Terminate video  
     video.release()
     cv2.destroyAllWindows()
+
+# Func 1: Open webcam
+def play_video():
+    # Open video link
+    camera = cv2.VideoCapture(0)
+    # Read video
+    while camera.isOpened():
+        ret,frame = camera.read()
+        if ret != True: # Check frame during playing
+            print("Video error")
+            break
+        # Get basic video info and show it
+        #frame_count = int(camera.get(cv2.CAP_PROP_POS_FRAMES))
+        #video_height = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        #video_width = int(camera.get(cv2.CAP_PROP_FRAME_WIDTH))
+        #video_length = round(camera.get(cv2.CAP_PROP_POS_MSEC)/1000,1)
+        #cv2.putText(frame,f"FPS:{frame_count}",(50,50),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,255,0),1)
+        #cv2.putText(frame,f"Resolution:{video_width}x{video_height}",
+                    #(50,70),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,255,0),1)
+        #cv2.putText(frame,f"Time:{video_length}",(50,90),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,255,0),1)
+        cv2.imshow("Video play",frame)
+        # Stop video any time
+        if cv2.waitKey(10) == ord("q"):
+            break  
+    # Terminate video  
+    camera.release()
+    cv2.destroyAllWindows()
