@@ -83,16 +83,27 @@ def ginput_image(folder_path,new_name):
 # ------------------------------------------openCV-------------------------------------------------
 # Func 1: Open video
 def play_video(video_path):
-    # Open video file (not play)
+    # Open video link
     video = cv2.VideoCapture(video_path)
-    cv2.namedWindow("Video",cv2.WINDOW_NORMAL)
-    # Play video and check issue
+    # Read video
     while video.isOpened():
-        ret,frame = video.read() # Read ret,frame
-        if ret != True:
+        ret,frame = video.read()
+        if ret != True: # Check frame during playing
             print("Video error")
             break
-        cv2.imshow("xxx",frame)
-        if cv2.waitKey(10) == ord("q"): # Stop video is pressing "q"
-            break
+        # Get basic video info and show it
+        frame_count = int(video.get(cv2.CAP_PROP_POS_FRAMES))
+        video_height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        video_width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
+        video_length = round(video.get(cv2.CAP_PROP_POS_MSEC)/1000,1)
+        cv2.putText(frame,f"FPS:{frame_count}",(50,50),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,255,0),1)
+        cv2.putText(frame,f"Resolution:{video_width}x{video_height}",
+                    (50,70),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,255,0),1)
+        cv2.putText(frame,f"Time:{video_length}",(50,90),cv2.FONT_HERSHEY_COMPLEX,0.5,(0,255,0),1)
+        cv2.imshow("Video play",frame)
+        # Stop video any time
+        if cv2.waitKey(10) == ord("q"):
+            break  
+    # Terminate video  
     video.release()
+    cv2.destroyAllWindows()
