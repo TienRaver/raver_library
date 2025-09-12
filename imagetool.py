@@ -89,7 +89,8 @@ def play_video(video_path):
     # Read video
     while video.isOpened():
         ret,frame = video.read()
-        if ret != True: # Check frame during playing
+        # Check frame during playing
+        if ret != True: 
             print("Video error")
             break
         # Get basic video info and show it
@@ -104,10 +105,10 @@ def play_video(video_path):
         cv2.imshow("Video play",frame)
         # Stop video any time
         if cv2.waitKey(10) == ord("q"):
-            break  
-    # Terminate video  
+            break 
     video.release()
     cv2.destroyAllWindows()
+    return frame
 
 # Func 2: Open webcam
 def play_webcam():
@@ -121,7 +122,7 @@ def play_webcam():
             print("Webcam error")
             break
         # Display time on video
-        cam_time = time.time()
+        cam_time = round(time.time(),1)
         cv2.putText(frame,f"Time:{cam_time}s",(50,50),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
         cv2.imshow("WEB CAM",frame)
         # Stop webcam any time
@@ -129,22 +130,23 @@ def play_webcam():
             break  
     cam.release()
     cv2.destroyAllWindows()
+    return frame
 
 # Func 3: Face detection
-def face_detection(image):
+def face_detection(frame):
     # Call cascade func
     face_cascade = cv2.CascadeClassifier("F:/09.ComputerVision/raver_library/Haar_Cascade(ML)/" \
                                         "haarcascade_frontalface_default.xml")
     eye_cascade = cv2.CascadeClassifier("F:/09.ComputerVision/raver_library/Haar_Cascade(ML)/" \
                                         "haarcascade_eye_tree_eyeglasses.xml")
     # Convert image to gray mode     
-    image_grayscale = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+    image_grayscale = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
     # Face,eye detection
     face = face_cascade.detectMultiScale(image_grayscale,scaleFactor=1.1,minNeighbors=5,minSize=(20,20))
     eye = eye_cascade.detectMultiScale(image_grayscale,scaleFactor=1.1,minNeighbors=1,minSize=(2,2))
     # Draw a rec around face,eye
     for (x,y,w,h) in face:
-        cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,255),1)
+        cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,255),1)
     for (x,y,w,h) in eye:
-        cv2.rectangle(image,(x,y),(x+w,y+h),(0,255,255),1)
-    return image
+        cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,255),1)
+    return frame
