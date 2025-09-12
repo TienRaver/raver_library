@@ -102,12 +102,11 @@ def play_video(video_path):
         cv2.putText(frame,f"Resolution:{video_width}x{video_height}",
                     (50,70),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
         cv2.putText(frame,f"Time:{video_length}",(50,90),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
-        cv2.imshow("Video play",frame)
-        # Stop video any time
-        if cv2.waitKey(10) == ord("q"):
-            break 
+        cv2.imshow("Video playback",frame)
+        if cv2.waitKey(10)==ord("q"):
+            break
     video.release()
-    cv2.destroyAllWindows()
+    cv2.destroyWindow("Video playback")
     return frame
 
 # Func 2: Open webcam
@@ -124,29 +123,39 @@ def play_webcam():
         # Display time on video
         cam_time = round(time.time(),1)
         cv2.putText(frame,f"Time:{cam_time}s",(50,50),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
-        cv2.imshow("WEB CAM",frame)
-        # Stop webcam any time
-        if cv2.waitKey(10) == ord("q"):
-            break  
+        cv2.imshow("Cam playback",frame)
+        if cv2.waitKey(10)==ord("q"):
+            break
     cam.release()
-    cv2.destroyAllWindows()
+    cv2.destroyWindow("Cam playback")
     return frame
 
-# Func 3: Face detection
-def face_detection(frame):
+# Func 3: Cascade Face detection
+def cascade_face_video(video_path):
     # Call cascade func
     face_cascade = cv2.CascadeClassifier("F:/09.ComputerVision/raver_library/Haar_Cascade(ML)/" \
                                         "haarcascade_frontalface_default.xml")
     eye_cascade = cv2.CascadeClassifier("F:/09.ComputerVision/raver_library/Haar_Cascade(ML)/" \
                                         "haarcascade_eye_tree_eyeglasses.xml")
-    # Convert image to gray mode     
-    image_grayscale = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-    # Face,eye detection
-    face = face_cascade.detectMultiScale(image_grayscale,scaleFactor=1.1,minNeighbors=5,minSize=(20,20))
-    eye = eye_cascade.detectMultiScale(image_grayscale,scaleFactor=1.1,minNeighbors=1,minSize=(2,2))
-    # Draw a rec around face,eye
-    for (x,y,w,h) in face:
-        cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,255),1)
-    for (x,y,w,h) in eye:
-        cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,255),1)
-    return frame
+    # Convert frame to grayscale
+    video = cv2.VideoCapture(video_path)
+    while video.isOpened():
+        ret,frame = video.read()
+        frame_grayscale = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+        if not ret:
+            print("Video issue")
+            break
+        # Face,eye detection by Cascade
+        face = face_cascade.detectMultiScale(frame_grayscale,scaleFactor=1.1,minNeighbors=5,minSize=(20,20))
+        eye = eye_cascade.detectMultiScale(frame_grayscale,scaleFactor=1.1,minNeighbors=1,minSize=(2,2))
+        # Draw a rectangle around face,eye
+        for (x,y,w,h) in face:
+            cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,255),1)
+        for (x,y,w,h) in eye:
+            cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,255),1)
+        cv2.imshow("Video Playback",frame)
+        if cv2.waitKey(10)==ord("q"):
+            break
+    video.release()
+    cv2.destroyAllWindows()
+    return face,eye
