@@ -6,38 +6,7 @@ import cv2
 import time
 
 # ------------------------------------------PIL,Numpy,OS,Matplotlib,Scipy-------------------------------------------------
-# Func 1: Average image
-def average_image(list):
-      # Create new array
-    image = Image.open(list[0])
-    total_array = np.array(image,"f")
-    count = 1
-    try:  
-    # Average image    
-        for i in list[1:]:
-            total_array += np.array(Image.open(i),"f")
-            count += 1
-        average_array = total_array/count # Average image
-        # Make image from average image
-        image_array = Image.fromarray(average_array.astype("uint8"))
-    except Exception as e:
-        print(f"Error: {e}")
-    return image_array
-
-# Func 2: Save average image
-def save_average_image(folder_path,list):
-    # Check name for average image 
-    image = Image.open(list[0])
-    new_name = "average_image"
-    extension = image.format.lower()
-    if not new_name.lower().endswith(f".{extension}"):
-        new_name += f".{extension}"
-    # Call average_image func and save as a new one
-    image_array = average_image(list)
-    new_average_image = image_array.save(os.path.join(folder_path,new_name),format=image.format,quality=100)
-    return new_average_image,new_name
-
-# Func 3: Balance gray image by CDF algorithm
+# Func 1: Balance gray image by CDF algorithm
 def cdf_image (folder_path,new_name):
     # Check gray mode of new average image
     image = Image.open(os.path.join(folder_path,new_name))
@@ -53,17 +22,7 @@ def cdf_image (folder_path,new_name):
     # Return CDF image
     return image_equalized
 
-# Func 4: Revert grayscale image (255-image)
-def revert_image(image_equalized_array):
-    reverted_image = 255-image_equalized_array
-    return reverted_image
-
-# Func 5: Contour
-def contour_image(image_equalized_array):
-    image_contour = plt.contour(image_equalized_array,origin="image")
-    return image_contour
-
-# Func 6: Input 10 points
+# Func 2: Input 10 points
 def ginput_image(folder_path,new_name):
     image = Image.open(os.path.join(folder_path,new_name))
     plt.imshow(image)
@@ -129,33 +88,3 @@ def play_webcam():
     cam.release()
     cv2.destroyWindow("Cam playback")
     return frame
-
-# Func 3: Cascade Face detection
-def cascade_face_video(video_path):
-    # Call cascade func
-    face_cascade = cv2.CascadeClassifier("F:/09.ComputerVision/raver_library/Haar_Cascade(ML)/" \
-                                        "haarcascade_frontalface_default.xml")
-    eye_cascade = cv2.CascadeClassifier("F:/09.ComputerVision/raver_library/Haar_Cascade(ML)/" \
-                                        "haarcascade_eye_tree_eyeglasses.xml")
-    # Convert frame to grayscale
-    video = cv2.VideoCapture(video_path)
-    while video.isOpened():
-        ret,frame = video.read()
-        frame_grayscale = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-        if not ret:
-            print("Video issue")
-            break
-        # Face,eye detection by Cascade
-        face = face_cascade.detectMultiScale(frame_grayscale,scaleFactor=1.1,minNeighbors=5,minSize=(20,20))
-        eye = eye_cascade.detectMultiScale(frame_grayscale,scaleFactor=1.1,minNeighbors=1,minSize=(2,2))
-        # Draw a rectangle around face,eye
-        for (x,y,w,h) in face:
-            cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,255),1)
-        for (x,y,w,h) in eye:
-            cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,255),1)
-        cv2.imshow("Video Playback",frame)
-        if cv2.waitKey(10)==ord("q"):
-            break
-    video.release()
-    cv2.destroyAllWindows()
-    return face,eye
