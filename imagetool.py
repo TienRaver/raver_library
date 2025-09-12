@@ -88,3 +88,4 @@ def play_webcam():
     cam.release()
     cv2.destroyWindow("Cam playback")
     return frame
+# Func 3: Face detection by DNN Caffe
